@@ -3,7 +3,7 @@ import shutil
 
 # Print Welcome Message
 print('|---------------------------------------------------------|')
-print('| File digger 1.0 (windows only)                          |')
+print('| File digger 1.1 (windows only)                          |')
 print('| - - - - - - - - - - - - - - - - - - - - - - - - - - - - |')
 print('| Function: Saves all the files beneath a                 |')
 print('|           directory into an output folder.              |')
@@ -23,9 +23,22 @@ while not os.path.exists(PATH):
     PATH = input('Path >  ')
 
 OUT_PATH = PATH + '_OUT'
+if os.path.exists(OUT_PATH):
+    shutil.rmtree(OUT_PATH)
+
+os.mkdir(OUT_PATH)
+
+while True:
+    preserveNames = input(' - Preserve Filenames? (Y/N)')
+    if preserveNames.lower() == 'y' or preserveNames.lower() == 'n':
+        break
+    else:
+        print(f' - -> "{preserveNames}" is not an accepted input.')
 
 print(' - Output Path:', OUT_PATH)
 print(' - Start extraction')
+
+
 
 def explore(path):
     for f in os.listdir(path):
@@ -40,14 +53,16 @@ explore(PATH)
 
 # Copy files over
 
-def getEnd(filename):
+def newName(filename, index):
     name, extension = os.path.splitext(filename)
-    return extension
-
-os.mkdir(OUT_PATH)
+    name = name.split('\\')[-1]
+    if preserveNames.lower() == 'y':
+        return f'{name}_{index}{extension}'
+    else:
+        return f'{index}{extension}'
 
 for i, file in enumerate(FILES):
-    newpath = OUT_PATH + '\\' + str(i+1) + str(getEnd(file))
+    newpath = OUT_PATH + '\\' + str(newName(file, i))
     print(' - Saving: ' + newpath)
     # copy2 to preserve meta data
     shutil.copy2(file, newpath)
